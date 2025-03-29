@@ -1,0 +1,48 @@
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+
+        vector<vector<int>> graph(numCourses);
+
+        vector<int> inDegrees(numCourses);
+
+        for (int i = 0; i < prerequisites.size(); i++)
+        {
+            graph[prerequisites[i][1]].push_back(prerequisites[i][0]);
+
+            inDegrees[prerequisites[i][0]]++;
+        }
+
+        queue<int> nodes;
+
+        for (int i = 0; i < numCourses; i++)
+        {
+            if (inDegrees[i] == 0)
+                nodes.push(i);
+        }
+
+        int pc = 0;
+        vector<bool> visited(numCourses, false);
+
+        while (!nodes.empty())
+        {
+            int start = nodes.front();
+            nodes.pop();
+            pc++;
+
+                for (int komsa : graph[start])
+                {
+                    inDegrees[komsa]--;
+                    if (inDegrees[komsa] == 0)
+                        nodes.push(komsa);
+                    
+                }
+
+            
+
+        }
+
+        return pc == numCourses;
+
+    }
+};
