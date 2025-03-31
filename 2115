@@ -1,0 +1,62 @@
+class Solution {
+    public:
+        vector<string> findAllRecipes(vector<string>& recipes, vector<vector<string>>& ingredients, vector<string>& supplies) {
+            
+            unordered_map<string, bool> canMake;
+            unordered_map<string, int> recipeIndex;
+
+            int n = recipes.size();
+
+           for(string supply : supplies)
+           {
+                canMake[supply]=true;
+           }
+
+           for(int i = 0; i < n; i++)
+           {
+                recipeIndex[recipes[i]]=i;
+            }
+
+            vector<string> meals;
+
+            for(int i = 0; i<n; i++)
+            {
+                unordered_set<string> visited;
+                tryMake(recipes[i], ingredients, visited, canMake, recipeIndex);
+                if(canMake[recipes[i]])
+                    meals.push_back(recipes[i]);
+
+            }
+
+            return meals;
+        }
+    private:
+        void tryMake(const string& recipe, vector<vector<string>>& ingredients, unordered_set<string>& visited,  unordered_map<string, bool>& canMake, unordered_map<string, int>& recipeIndex)
+        {
+            if(canMake.find(recipe)!=canMake.end())
+            {
+                return;
+            }
+
+            auto idxIt = recipeIndex.find(recipe);
+            if(idxIt==recipeIndex.end() || visited.count(recipe))
+            {
+                canMake[recipe]=false;
+                return;
+            }
+
+            visited.insert(recipe);
+
+            for(const string& ingredient : ingredients[idxIt->second])
+            {
+                tryMake(ingredient, ingredients, visited, canMake, recipeIndex);
+                if(!canMake[ingredient])
+                {
+                    canMake[recipe]=false;
+                    return;
+                }
+            }
+
+            canMake[recipe]=true;
+        }
+    };
